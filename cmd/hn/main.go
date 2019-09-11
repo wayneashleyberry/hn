@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/gob"
 	"fmt"
 	"os"
@@ -59,7 +60,9 @@ func main() {
 		}
 	}
 
-	ids, err := hackernews.TopStories()
+	bg := context.Background()
+
+	ids, err := hackernews.TopStories(bg)
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +74,10 @@ func main() {
 			continue
 		}
 
-		i, err := hackernews.GetItem(id)
+		ctx, cancel := context.WithTimeout(bg, time.Second*2)
+		defer cancel()
+
+		i, err := hackernews.GetItem(ctx, id)
 		if err != nil {
 			panic(err)
 		}

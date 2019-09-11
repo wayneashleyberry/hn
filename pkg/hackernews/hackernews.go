@@ -1,19 +1,26 @@
 package hackernews
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 )
 
 // TopStories returns a slice of story ID's
-func TopStories() ([]int, error) {
+func TopStories(ctx context.Context) ([]int, error) {
 	url := "https://hacker-news.firebaseio.com/v0/topstories.json"
-	client := &http.Client{
-		Timeout: time.Second * 1,
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return []int{}, err
 	}
-	r, err := client.Get(url)
+
+	req = req.WithContext(ctx)
+
+	client := http.DefaultClient
+
+	res, err := client.Do(req)
 	if err != nil {
 		return []int{}, err
 	}
@@ -22,8 +29,8 @@ func TopStories() ([]int, error) {
 
 	var responseBody ResponseBody
 
-	defer r.Body.Close()
-	err = json.NewDecoder(r.Body).Decode(&responseBody)
+	defer res.Body.Close()
+	err = json.NewDecoder(res.Body).Decode(&responseBody)
 	if err != nil {
 		return []int{}, err
 	}
@@ -44,20 +51,27 @@ type Item struct {
 }
 
 // GetItem will fetch an item by ID
-func GetItem(id int) (Item, error) {
+func GetItem(ctx context.Context, id int) (Item, error) {
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", id)
-	client := &http.Client{
-		Timeout: time.Second * 1,
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return Item{}, err
 	}
-	r, err := client.Get(url)
+
+	req = req.WithContext(ctx)
+
+	client := http.DefaultClient
+
+	res, err := client.Do(req)
 	if err != nil {
 		return Item{}, err
 	}
 
 	var responseBody Item
 
-	defer r.Body.Close()
-	err = json.NewDecoder(r.Body).Decode(&responseBody)
+	defer res.Body.Close()
+	err = json.NewDecoder(res.Body).Decode(&responseBody)
 	if err != nil {
 		return Item{}, err
 	}
