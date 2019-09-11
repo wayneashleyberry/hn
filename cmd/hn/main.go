@@ -61,7 +61,7 @@ func main() {
 
 	ids, err := hackernews.TopStories()
 	if err != nil {
-		return
+		panic(err)
 	}
 
 	items := []hackernews.Item{}
@@ -73,7 +73,7 @@ func main() {
 
 		i, err := hackernews.GetItem(id)
 		if err != nil {
-			return
+			panic(err)
 		}
 
 		items = append(items, i)
