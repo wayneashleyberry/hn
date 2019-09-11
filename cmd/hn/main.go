@@ -81,7 +81,10 @@ func main() {
 
 	render(items)
 
-	c.Add("items", items, cache.DefaultExpiration)
+	err = c.Add("items", items, cache.DefaultExpiration)
+	if err != nil {
+		panic(err)
+	}
 
 	f, err := os.Create(cachefile)
 	if err != nil {
