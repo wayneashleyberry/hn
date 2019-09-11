@@ -44,9 +44,10 @@ func main() {
 
 		tm := time.Unix(s.Time, 0)
 
+		fmt.Printf("%d. ", n+1)
 		hyperlink.Write(os.Stdout, s.URL, s.Title)
 		fmt.Print("\n")
-		color.White().Dim().Printf("%d points by %s %s\n", s.Score, s.By, humanize.Time(tm))
+		color.White().Dim().Printf("   %d points by %s %s\n", s.Score, s.By, humanize.Time(tm))
 	}
 }
 
