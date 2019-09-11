@@ -45,20 +45,18 @@ func main() {
 			var cachedItems map[string]cache.Item
 			err := dec.Decode(&cachedItems)
 			if err == nil {
-				c = cache.NewFrom(5*time.Minute, 10*time.Minute, cachedItems)
+				cc := cache.NewFrom(5*time.Minute, 10*time.Minute, cachedItems)
 
-				values, present := c.Get("items")
+				values, present := cc.Get("items")
 				if present {
 					items, ok := values.([]hackernews.Item)
-					if ok {
-						fmt.Println("printing from cache")
+					if ok && len(items) > 0 {
 						render(items)
 						return
 					}
 				}
 			}
 		}
-		// c = cache.NewFrom(5*time.Minute, 10*time.Minute)
 	}
 
 	ids, err := hackernews.TopStories()
@@ -81,7 +79,6 @@ func main() {
 		items = append(items, i)
 	}
 
-	fmt.Println("printing from source")
 	render(items)
 
 	c.Add("items", items, cache.DefaultExpiration)
