@@ -19,7 +19,7 @@ func main() {
 
 	gob.Register(gobtype)
 
-	c := cache.New(5*time.Minute, 10*time.Minute)
+	c := cache.New(30*time.Minute, 1*time.Hour)
 
 	usercache, err := os.UserCacheDir()
 	if err != nil {
@@ -45,7 +45,7 @@ func main() {
 			var cachedItems map[string]cache.Item
 			err := dec.Decode(&cachedItems)
 			if err == nil {
-				cc := cache.NewFrom(5*time.Minute, 10*time.Minute, cachedItems)
+				cc := cache.NewFrom(30*time.Minute, 1*time.Hour, cachedItems)
 
 				values, present := cc.Get("items")
 				if present {
