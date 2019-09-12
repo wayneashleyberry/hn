@@ -15,12 +15,17 @@ import (
 	"github.com/wayneashleyberry/truecolor/pkg/color"
 )
 
+const (
+	defaultExpiration = 1 * time.Hour
+	cleanupInterval   = 1 * time.Minute
+)
+
 func main() {
 	var gobtype []hackernews.Item
 
 	gob.Register(gobtype)
 
-	c := cache.New(30*time.Minute, 1*time.Hour)
+	c := cache.New(defaultExpiration, cleanupInterval)
 
 	usercache, err := os.UserCacheDir()
 	if err != nil {
@@ -46,7 +51,7 @@ func main() {
 			var cachedItems map[string]cache.Item
 			err := dec.Decode(&cachedItems)
 			if err == nil {
-				cc := cache.NewFrom(30*time.Minute, 1*time.Hour, cachedItems)
+				cc := cache.NewFrom(defaultExpiration, cleanupInterval, cachedItems)
 
 				values, present := cc.Get("items")
 				if present {
